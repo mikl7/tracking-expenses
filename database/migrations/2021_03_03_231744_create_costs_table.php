@@ -16,11 +16,13 @@ class CreateCostsTable extends Migration
         Schema::create('costs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug');
             $table->integer('money');
-            $table->bigInteger('budget_id')->unsigned()->index();
+            $table->bigInteger('user_id')->nullable();
+            $table->bigInteger('budget_id')->unsigned()->index()->nullable();
             $table->foreign('budget_id')
                 ->references('id')->on('budgets')
-                ->onDelete('cascade');
+                ->onDelete('cascade')->nullable();
             $table->timestamps();
         });
     }

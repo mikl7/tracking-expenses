@@ -10,31 +10,38 @@
                 <th scope="col">Бюджет</th>
                 <th scope="col">Наличные</th>
                 <th scope="col">Время редактирования</th>
+                <th scope="col">Просмотреть</th>
                 <th scope="col">Редактировать</th>
                 <th scope="col">Удалить</th>
               </tr>
             </thead>
             <tbody>
                 @foreach($budgets as $budget)
-                    <tr>
-                        <td scope="col">{{$budget->id}}</td>
-                        <td scope="col">{{$budget->name}}</td>
-                        <td scope="col">{{$budget->money}}</td>
-                        <td scope="col">{{$budget->created_at}}</td>
-                        <td scope="col">
-                            <a href="{{ route('budgets.edit',['budget'=>$budget->id]) }}">
-                                <i class="bi bi-pencil-square h2 pl-5 "></i>
-                            </a>
-                        </td>
-                        <td scope="col">
-                            <form action="{{ route('budgets.destroy', ['budget'=>$budget->id]) }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                    <i class="bi bi-x-square h2 text-danger"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td scope="col">{{$budget->id}}</td>
+                            <td scope="col">{{$budget->name}}</td>
+                            <td scope="col">{{$budget->money}}</td>
+                            <td scope="col">{{$budget->created_at}}</td>
+                            <td scope="col">
+                                <a href="{{ route('budgets.show',['budget'=>$budget->id]) }}">
+                                    <i class="bi bi-eye h2 pl-4 "></i>
+                                </a>
+                            </td>
+                            <td scope="col">
+                                <a href="{{ route('budgets.edit',['budget'=>$budget->id]) }}">
+                                    <i class="bi bi-pencil-square h2 pl-4 "></i>
+                                </a>
+                            </td>
+                            <td scope="col">
+                                <form action="{{ route('budgets.destroy', ['budget'=>$budget->id]) }}" method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link">
+                                        <i class="bi bi-x-square h2 text-danger"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                 @endforeach
             </tbody>
         </table>

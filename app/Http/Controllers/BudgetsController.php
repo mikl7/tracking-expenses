@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Cost;
 
 class BudgetsController extends Controller
 {
@@ -17,7 +17,7 @@ class BudgetsController extends Controller
      */
     public function index()
     {
-        return view('budgets.index',['budgets'=> Budget::all()]);
+        return view('budgets.index', ['budgets' => Budget::all()]);
     }
 
     /**
@@ -38,14 +38,14 @@ class BudgetsController extends Controller
      */
     public function store(Request $request)
     {
-        Budget::create($request->validate([
+        $this->validate($request, [
             'name' => 'required',
             'money' => 'required',
-        ]));
+        ]);
+
+        Budget::create($request->all());
 
         return redirect()->route('budgets.index');
-
-
     }
 
     /**
@@ -56,7 +56,9 @@ class BudgetsController extends Controller
      */
     public function show(Budget $budget)
     {
-        return view('budgets.show',['budgets'=> $budget]);
+        $cost = Cost::where('budget_id', '=', $budget->id)->paginate(5);
+
+        return view('costs.index', ['budgets' => $cost]);
     }
 
     /**
@@ -67,7 +69,7 @@ class BudgetsController extends Controller
      */
     public function edit(Budget $budget)
     {
-        return view('budgets.edit', ['budgets'=> $budget]);
+        return view('budgets.edit', ['budgets' => $budget]);
     }
 
     /**
@@ -81,14 +83,13 @@ class BudgetsController extends Controller
     {
 
         Budget::where('id', $budget->id)
-                    ->update($request->validate([
-                        'name'=>'required',
-                        'money'=>'required',
-        ]));
+            ->update($request->validate([
+                'name' => 'required',
+                'money' => 'required',
+            ]));
 
 
         return redirect()->route('budgets.index');
-
     }
 
     /**
@@ -100,7 +101,7 @@ class BudgetsController extends Controller
     public function destroy(Budget $budget)
     {
 
-       Budget::destroy($budget->id);
-       return redirect()->route('budgets.index');
+        Budget::destroy($budget->id);
+        return redirect()->route('budgets.index');
     }
 }

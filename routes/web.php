@@ -20,4 +20,4 @@ Auth::routes();
 
 Route::resource('/budgets', 'BudgetsController');
 
-Route::resource('/costs', 'CostController');
+Route::resource('/budgets/{budget}/{?}/costs', 'BudgetCosts');
