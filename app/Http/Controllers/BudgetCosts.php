@@ -2,17 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Budget;
-use Illuminate\Http\Request;
-use App\Http\Requests\CreateCost;
 use App\Models\Cost;
+use App\Models\Budget;
+use App\Http\Requests\CreateCost;
+use App\Http\Requests\UpdateCost;
+use Illuminate\Support\Facades\Auth;
 
 class BudgetCosts extends Controller
 {
+
+    public function index(Budget $budget)
+    {
+        $cost = Cost::where('budget_id', '=', $budget->id)->paginate(5);
+        return view('costs.index', ['budget' => $budget, 'cost' => $cost]);
+    }
+
     public function store(Budget $budget, CreateCost $request)
     {
-        $cost = $budget->costs()->create($request->validated());
-        return redirect(route('budgets.show', $budget));
+
+        $cost = Cost::add($request->validated());
+        $cost->budget_id = $budget->id;
+        $cost->user_id = Auth::user()->id;
+        $cost->save();
+
+
+        return redirect(route('costs.index', $budget));
     }
 
     public function create(Budget $budget)
@@ -21,27 +35,22 @@ class BudgetCosts extends Controller
     }
 
 
-    public function destroy($budget, $cost)
+    public function destroy(Budget $budget, Cost $cost)
     {
-        Cost::find($cost->id)->remove();
-        return redirect()->route('budgets.show', $budget);
+        Cost::find($cost->id)->delete();
+        return redirect()->route('costs.index', $budget);
     }
 
 
-    public function edit($budget, $cost)
+    public function edit(Budget $budget, Cost $cost)
     {
-        return view('costs.edit', ['cost' => Cost::find($cost), 'budget' => $budget]);
+        return view('costs.edit', ['budget' => $budget, 'cost' => $cost]);
     }
 
-    public function update(Request $request, $budget, $cost)
+    public function update(Budget $budget, Cost $cost, UpdateCost $request)
     {
-        Cost::where('id', $cost)
-            ->update($request->validate([
-                'name' => 'required',
-                'money' => 'required',
-            ]));
+        $cost = $budget->costs()->where('id', $cost->id)->update($request->validated());
 
-
-        return redirect()->route('budgets.show', $budget);
+        return redirect()->route('costs.index', $budget);
     }
 }

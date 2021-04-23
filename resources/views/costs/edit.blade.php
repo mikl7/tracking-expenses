@@ -3,7 +3,7 @@
 
 @section("content")
     <div class="container p-5">
-        <form role="form" method="post" action="{{ route('costs.update', ['budget'=>$budget, 'cost'=>$cost]) }}">
+        <form role="form" method="post" action="{{ route('costs.update', ['budget'=>$budget, 'cost'=>$cost->id]) }}">
             @csrf
             @method("PUT")
             <div class="form-group">

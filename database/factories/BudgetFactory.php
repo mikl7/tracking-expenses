@@ -22,8 +22,7 @@ class BudgetFactory extends Factory
     public function definition()
     {
         return [
-            'name'=>$this->faker->word,
-            'money'=>$this->faker->randomNumber(2),
+            'name' => $this->faker->word,
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use Illuminate\Http\Request;
-use App\Models\Cost;
+use Illuminate\Support\Facades\Auth;
 
 class BudgetsController extends Controller
 {
@@ -15,9 +15,12 @@ class BudgetsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Budget $budget)
     {
-        return view('budgets.index', ['budgets' => Budget::all()]);
+        $user = Auth::user();
+
+        $budget = $budget->paginate(5);
+        return view('budgets.index', ['budget' => $budget, 'user' => $user]);
     }
 
     /**
@@ -38,28 +41,18 @@ class BudgetsController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'name' => 'required',
-            'money' => 'required',
         ]);
 
-        Budget::create($request->all());
-
+        $budget = Budget::create($request->all());
+        $budget->user_id = Auth::user()->id;
+        //$budget->money = 0;
+        $budget->save();
         return redirect()->route('budgets.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Budget  $budget
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Budget $budget)
-    {
-        $cost = Cost::where('budget_id', '=', $budget->id)->paginate(5);
-
-        return view('costs.index', ['budgets' => $cost]);
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -69,7 +62,7 @@ class BudgetsController extends Controller
      */
     public function edit(Budget $budget)
     {
-        return view('budgets.edit', ['budgets' => $budget]);
+        return view('budgets.edit', ['budget' => $budget]);
     }
 
     /**
@@ -85,7 +78,6 @@ class BudgetsController extends Controller
         Budget::where('id', $budget->id)
             ->update($request->validate([
                 'name' => 'required',
-                'money' => 'required',
             ]));
 
 
