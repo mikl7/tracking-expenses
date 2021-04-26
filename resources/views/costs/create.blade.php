@@ -4,7 +4,6 @@
 @section("content")
 
     <div class="container p-5">
-        {{dd($budget)}}
         <form action="{{ route('costs.store', $budget) }}" method="POST">
             @csrf
             <div class="form-group">

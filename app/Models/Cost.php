@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Cost extends Model
 {
     use Sluggable;
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'money', 'budget_id'];
+    protected $fillable = ['name', 'slug', 'money', 'budget_id', 'user_id'];
 
     public function budget()
     {
@@ -20,7 +21,7 @@ class Cost extends Model
 
     public function author()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
 
     public function sluggable(): array
@@ -38,9 +39,7 @@ class Cost extends Model
     {
         $cost = new static;
         $cost->fill($fields);
-        $cost->user_id = 1;
         $cost->save();
-
         return $cost;
     }
 
@@ -61,6 +60,14 @@ class Cost extends Model
             return;
         }
         $this->budget_id = $id;
+    }
+
+    public function setUser($id)
+    {
+        if ($id == null) {
+            return;
+        }
+        $this->user_id = Auth::user()->id;
         $this->save();
     }
 }

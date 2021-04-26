@@ -15,9 +15,9 @@ use App\Http\Controllers\MainController;
 */
 
 Route::get('/', 'MainController@index');
-
 Auth::routes();
 
-Route::resource('/budgets', 'BudgetsController');
-
-Route::resource('/budgets/{budget}/{?}/costs', 'BudgetCosts');
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('/budgets', 'BudgetsController');
+    Route::resource('/budgets/{budget}/costs', 'BudgetCosts');
+});

@@ -18,7 +18,7 @@ class CreateBudgetsTable extends Migration
             $table->string('name');
             $table->string('slug');
             $table->bigInteger('user_id')->nullable();
-            $table->integer('money');
+            $table->integer('money')->default('0');
             $table->timestamps();
         });
     }
